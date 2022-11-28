@@ -1,0 +1,23 @@
+{
+  "name": "twitch-pubsub-api",
+  "version": "0.0.1",
+  "description": "This is a simple API to use PubSub from twtich, it's based on https://github.com/dieserRobin/twitchpub",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "twitch",
+    "twitch pubsub",
+    "channel points"
+  ],
+  "author": "Luis Bazán",
+  "license": "MIT",
+  "dependencies": {
+    "websocket": "^1.0.34"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
