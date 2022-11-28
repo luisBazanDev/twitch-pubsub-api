@@ -1,31 +1,54 @@
-import { TwitchPubSubWS } from "./lib/WebSocket";
+import { TwitchPubSubWS } from "./lib/WebSocket.js";
 import { EventEmitter } from "events";
 
 class TwitchPubSubApi extends EventEmitter {
-  constructor({ oatuh, channels = [], topics = [] }) {
+  constructor({ oauth, channels = [46024993] }) {
     super();
-    this.tpws = new TwitchPubSubWS({ oatuh });
+    this.oauth = oauth;
+    this.tpws = new TwitchPubSubWS({
+      oauth: this.oauth,
+      url: "wss://pubsub-edge.twitch.tv",
+    });
 
-    this.tpws.ws.onmessage = (event) => {
-      var message = JSON.parse(event.data);
-      if (message.type == "RECONNECT") {
-        console.log("Reconnecting...");
-        setTimeout(self._connect, reconnectInterval);
-        return;
+    this.once("newListener", (event, listener) => {
+      switch (event) {
+        case "channel-bits":
+          event = "channel-bits-events-v2";
+          break;
+
+        case "channel-points":
+          event = "channel-points-channel-v1";
+          break;
+
+        case "channel-subscriptions":
+          event = "channel-subscribe-events-v1";
+          break;
+
+        case "channel-bits-badge":
+          event = "channel-bits-badge-unlocks";
+          break;
+
+        case "chat-moderatoractions":
+          event = "chat_moderator_actions";
+          break;
+
+        case "whispers":
+          event = "whispers";
+          break;
+        default:
+          return;
       }
-
-      console.log(1);
-
-      if (message.type === "MESSAGE") {
-        this.distributor(message.data);
-      }
-    };
-    topics.forEach((topic) => {
       channels.forEach((channel) => {
-        this.tpws._listen(topic, channel);
+        this.tpws.register(event, channel);
       });
     });
+
+    this.tpws.onmessage = this.message;
   }
 
-  distributor(event) {}
+  message(msg) {
+    console.log(JSON.parse(msg));
+  }
 }
+
+export default TwitchPubSubApi;

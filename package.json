@@ -15,7 +15,8 @@
   "author": "Luis Bazán",
   "license": "MIT",
   "dependencies": {
-    "websocket": "^1.0.34"
+    "dotenv": "^16.0.3",
+    "ws": "^8.11.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
